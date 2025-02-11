@@ -2,12 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class TileController : MonoBehaviour,IPointerDownHandler
 {
     public TileState MyState{get; set;}
     [SerializeField] private SpriteRenderer spriteRenderer;
-    [SerializeField] private Color xColor,oColor;
+    [SerializeField] private Sprite xSprite,oSprite;
+    [SerializeField] public int xNumber,oNumber;
+    [SerializeField] private Color xColor,oColor,emptyColor;
+
+    [SerializeField] private GameObject GameUI;
+
+   
+
+
+
 
     public Vector2 position;
 
@@ -15,25 +25,43 @@ public class TileController : MonoBehaviour,IPointerDownHandler
     public void OnPointerDown(PointerEventData eventData)
 
     {
+        if(!GameUI.activeSelf) return;
         Debug.Log("Tile clicked");
         var state = GameManager.Instance.turn%2 == 0 ? TileState.X : TileState.O;
-        SetState(state);    
+        int currentNumber;
+        if(state == TileState.X)
+        {
+            GameManager.Instance.xCountt++;
+            xNumber = GameManager.Instance.xCountt;
+            currentNumber = xNumber;
+
+        }
+        else
+        {
+            GameManager.Instance.oCountt++;
+            oNumber = GameManager.Instance.oCountt;
+            currentNumber = oNumber;
+        }
+        SetState(state, currentNumber); 
+
         GameManager.Instance.turn++;
+        GameManager.Instance.checkNumber();
         var result = GameManager.Instance.HasWinner();
         if(result.Item1)
         {
-            Debug.Log($"Player {result.Item2} wins!");
+            GameManager.Instance.WinState(result.Item2);
         }
     }
 
 
-
-
-    public void SetState(TileState state)
+    public void SetState(TileState state, int number)
     {
         if(MyState != TileState.Empty) return;
         MyState = state;
         spriteRenderer.color = state == TileState.X ? xColor : oColor;
+        spriteRenderer.sprite = state == TileState.X ? xSprite : oSprite;
+        
+     
     }
 
     public TileController GetNextTile(Direction dir)
@@ -73,9 +101,17 @@ public class TileController : MonoBehaviour,IPointerDownHandler
         return GameManager.Instance.ListTileController.Find(t => t.position == nextTileCoordinate);
     }
 
-
+public void ResetTile()
+{
+    MyState = TileState.Empty;
+    spriteRenderer.color = emptyColor;
+    spriteRenderer.sprite = null;
+    xNumber = 0;
+    oNumber = 0;
 }
 
+
+}
 
 public enum TileState
 
