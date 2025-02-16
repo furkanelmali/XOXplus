@@ -13,6 +13,8 @@ public class TileController : MonoBehaviour,IPointerDownHandler
     [SerializeField] private Color xColor,oColor,emptyColor;
 
     [SerializeField] private GameObject GameUI;
+    [SerializeField] private Animation animation;
+    private AudioSource audioSource;
 
    
 
@@ -22,11 +24,16 @@ public class TileController : MonoBehaviour,IPointerDownHandler
     public Vector2 position;
 
 
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
     public void OnPointerDown(PointerEventData eventData)
 
     {
         if(!GameUI.activeSelf) return;
         Debug.Log("Tile clicked");
+        audioSource.Play();
         var state = GameManager.Instance.turn%2 == 0 ? TileState.X : TileState.O;
         int currentNumber;
         if(state == TileState.X)
@@ -43,10 +50,24 @@ public class TileController : MonoBehaviour,IPointerDownHandler
             currentNumber = oNumber;
         }
         SetState(state, currentNumber); 
+        animation.Play();
 
         GameManager.Instance.turn++;
         GameManager.Instance.checkNumber();
         var result = GameManager.Instance.HasWinner();
+        if(GameManager.Instance.gameMode == 1)
+        {
+            state = GameManager.Instance.turn%2 == 0 ? TileState.X : TileState.O;
+            AIPlayer aiPlayer = FindObjectOfType<AIPlayer>();
+            aiPlayer.MakeMove(state, GameManager.Instance.ListTileController);
+            animation.Play();
+
+            GameManager.Instance.turn++;
+            GameManager.Instance.checkNumber();
+            result = GameManager.Instance.HasWinner();
+            
+        }
+
         if(result.Item1)
         {
             GameManager.Instance.WinState(result.Item2);

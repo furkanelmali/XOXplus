@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI winText, restartText;
     [SerializeField] private GameObject restartButton;
     [SerializeField] public int xCountt, oCountt;
+
+    public int gameMode = 0;
     
 
 

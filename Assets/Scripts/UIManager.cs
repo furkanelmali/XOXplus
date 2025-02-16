@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class UIManager : MonoBehaviour
 { 
     [SerializeField] private GameObject[] menus;
+
+    GameManager gameManager;
     GameObject currentMenu;
 
      public void CloseBtn()
@@ -28,5 +30,10 @@ public class UIManager : MonoBehaviour
     public void HomeBtn()
     {
         SceneManager.LoadScene(0);
+    }
+
+    public void GameModeBtn(int gameMode)
+    {
+        GameManager.Instance.gameMode = gameMode;
     }
 }
