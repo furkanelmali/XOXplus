@@ -13,7 +13,7 @@ public class TileController : MonoBehaviour,IPointerDownHandler
     [SerializeField] private Color xColor,oColor,emptyColor;
 
     [SerializeField] private GameObject GameUI;
-    [SerializeField] private Animation animation;
+    public Animation animation;
     private AudioSource audioSource;
 
    
@@ -34,7 +34,7 @@ public class TileController : MonoBehaviour,IPointerDownHandler
         if(!GameUI.activeSelf) return;
         Debug.Log("Tile clicked");
         audioSource.Play();
-        var state = GameManager.Instance.turn%2 == 0 ? TileState.X : TileState.O;
+        var state = StateChooser();
         int currentNumber;
         if(state == TileState.X)
         {
@@ -57,15 +57,7 @@ public class TileController : MonoBehaviour,IPointerDownHandler
         var result = GameManager.Instance.HasWinner();
         if(GameManager.Instance.gameMode == 1)
         {
-            state = GameManager.Instance.turn%2 == 0 ? TileState.X : TileState.O;
-            AIPlayer aiPlayer = FindObjectOfType<AIPlayer>();
-            aiPlayer.MakeMove(state, GameManager.Instance.ListTileController);
-            animation.Play();
-
-            GameManager.Instance.turn++;
-            GameManager.Instance.checkNumber();
-            result = GameManager.Instance.HasWinner();
-            
+            StartCoroutine(AITurnWithDelay());
         }
 
         if(result.Item1)
@@ -84,6 +76,26 @@ public class TileController : MonoBehaviour,IPointerDownHandler
         
      
     }
+    
+
+    private IEnumerator AITurnWithDelay()
+{
+    yield return new WaitForSeconds(0.5f); // 0.5 saniyelik gecikme
+    
+    var state = StateChooser();
+    AIPlayer aiPlayer = FindObjectOfType<AIPlayer>();
+    aiPlayer.MakeMove(state, GameManager.Instance.ListTileController);
+    
+
+    GameManager.Instance.turn++;
+    GameManager.Instance.checkNumber();
+    var result = GameManager.Instance.HasWinner();
+    
+    if(result.Item1)
+    {
+        GameManager.Instance.WinState(result.Item2);
+    }
+}
 
     public TileController GetNextTile(Direction dir)
     {
@@ -131,6 +143,20 @@ public void ResetTile()
     oNumber = 0;
 }
 
+
+TileState StateChooser()
+{
+    if(GameManager.Instance.stateChooser == 0)
+    {
+        var state = GameManager.Instance.turn%2 == 0 ? TileState.X : TileState.O;
+        return state;
+    }
+    else
+    {
+        var state = GameManager.Instance.turn%2 == 0 ? TileState.O : TileState.X;
+        return state;
+    }
+}
 
 }
 

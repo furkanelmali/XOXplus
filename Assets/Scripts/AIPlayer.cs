@@ -12,7 +12,7 @@ public class AIPlayer : MonoBehaviour
     public void MakeMove(TileState state, List<TileController> listTileController)
     {
 
-        var winMove =CheckNextWinningMove(listTileController,state);
+        var winMove = CheckNextWinningMove(listTileController,state);
         if(winMove.Item1)
         {
             GameManager.Instance.oCountt++;
@@ -20,9 +20,10 @@ public class AIPlayer : MonoBehaviour
 
             winMove.Item2.SetState(state,oNumber);
             winMove.Item2.oNumber = oNumber;
+            winMove.Item2.animation.Play();
             return;
         }
-        var blockMove =CheckNextWinningMove(listTileController,TileState.X);
+        var blockMove = CheckNextWinningMove(listTileController,TileState.X);
         if(blockMove.Item1)
         {
             GameManager.Instance.oCountt++;
@@ -30,6 +31,7 @@ public class AIPlayer : MonoBehaviour
 
             blockMove.Item2.SetState(state,oNumber);
             blockMove.Item2.oNumber = oNumber;
+            blockMove.Item2.animation.Play();
             return;
         }
 
@@ -41,9 +43,11 @@ public class AIPlayer : MonoBehaviour
 
             blockMove.Item2.SetState(state,oNumber);
             blockMove.Item2.oNumber = oNumber;
+            blockMove.Item2.animation.Play();
             return;
         }
-       
+        
+
 
     }
 

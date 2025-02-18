@@ -17,13 +17,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject restartButton;
     [SerializeField] public int xCountt, oCountt;
 
-    public int gameMode = 0;
+    [SerializeField] public int stateChooser;
+
+    public int gameMode;
     
 
 
     private void Awake()
     {
         Instance = this;
+        gameMode = PlayerPrefs.GetInt("gameMode", 0);
     }
 
     public (bool,TileState) HasWinner()
