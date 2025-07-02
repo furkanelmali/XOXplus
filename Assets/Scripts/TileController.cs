@@ -16,6 +16,8 @@ public class TileController : MonoBehaviour,IPointerDownHandler
     public Animation animation;
     private AudioSource audioSource;
 
+    
+
    
 
 
@@ -26,13 +28,15 @@ public class TileController : MonoBehaviour,IPointerDownHandler
 
     void Start()
     {
+        GameManager.Instance.isitPlayersTurn = true;
         audioSource = GetComponent<AudioSource>();
     }
     public void OnPointerDown(PointerEventData eventData)
-
     {
+        if(this.MyState != TileState.Empty) return;
+        if(!GameManager.Instance.isitPlayersTurn) return;
         if(!GameUI.activeSelf) return;
-        Debug.Log("Tile clicked");
+        Debug.Log("Tile clicked" + GameManager.Instance.isitPlayersTurn);
         audioSource.Play();
         var state = StateChooser();
         int currentNumber;
@@ -57,7 +61,9 @@ public class TileController : MonoBehaviour,IPointerDownHandler
         var result = GameManager.Instance.HasWinner();
         if(GameManager.Instance.gameMode == 1)
         {
+            
             StartCoroutine(AITurnWithDelay());
+            
         }
 
         if(result.Item1)
@@ -77,26 +83,30 @@ public class TileController : MonoBehaviour,IPointerDownHandler
      
     }
     
-
     private IEnumerator AITurnWithDelay()
-{
-    yield return new WaitForSeconds(0.5f); // 0.5 saniyelik gecikme
-    
-    var state = StateChooser();
-    AIPlayer aiPlayer = FindObjectOfType<AIPlayer>();
-    aiPlayer.MakeMove(state, GameManager.Instance.ListTileController);
-    
-
-    GameManager.Instance.turn++;
-    GameManager.Instance.checkNumber();
-    var result = GameManager.Instance.HasWinner();
-    
-    if(result.Item1)
     {
-        GameManager.Instance.WinState(result.Item2);
-    }
-}
+        GameManager.Instance.isitPlayersTurn = false;
+        yield return new WaitForSeconds(0.5f); // 0.5 saniyelik gecikme
+    
+        var state = StateChooser();
+        AIPlayer aiPlayer = FindObjectOfType<AIPlayer>();
+        aiPlayer.MakeMove(state, GameManager.Instance.ListTileController);
+    
 
+        GameManager.Instance.turn++;
+        GameManager.Instance.checkNumber();
+        var result = GameManager.Instance.HasWinner();
+    
+        if(result.Item1)
+        {
+            GameManager.Instance.WinState(result.Item2);
+        }
+        
+        GameManager.Instance.isitPlayersTurn = true;
+    }
+
+
+    
     public TileController GetNextTile(Direction dir)
     {
         var nextTileCoordinate = position;

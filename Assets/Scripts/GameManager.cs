@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] public int stateChooser;
 
     public int gameMode;
+    public bool isitPlayersTurn;
     
 
 
@@ -92,6 +93,8 @@ public class GameManager : MonoBehaviour
             restartText.gameObject.SetActive(true);
             restartButton.SetActive(true);
             winText.gameObject.SetActive(true);
+            StartCoroutine(LoadFullPageAd());
+            
     }
 
     public void Restart()
@@ -114,6 +117,13 @@ public class GameManager : MonoBehaviour
     public int GetTotalOCount()
     {
         return ListTileController.Count(t => t.MyState == TileState.O);
+    }
+
+    private IEnumerator LoadFullPageAd()
+    {
+        yield return new WaitForSeconds(1f);
+        FullPageAd fpageAd = FindObjectOfType<FullPageAd>();
+            fpageAd.ShowInterstitialAd();
     }
 
 }   

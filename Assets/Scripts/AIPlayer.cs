@@ -8,43 +8,83 @@ using TMPro;
 
 public class AIPlayer : MonoBehaviour
 {
-     int oNumber;
+     int xoNumber;
     public void MakeMove(TileState state, List<TileController> listTileController)
     {
 
         var winMove = CheckNextWinningMove(listTileController,state);
         if(winMove.Item1)
         {
-            GameManager.Instance.oCountt++;
-            oNumber = GameManager.Instance.oCountt;
+            if(state == TileState.X)
+            {
+                GameManager.Instance.xCountt++;
+                xoNumber = GameManager.Instance.xCountt;
 
-            winMove.Item2.SetState(state,oNumber);
-            winMove.Item2.oNumber = oNumber;
-            winMove.Item2.animation.Play();
+                 winMove.Item2.SetState(state,xoNumber);
+                winMove.Item2.xNumber = xoNumber;
+                winMove.Item2.animation.Play();
             return;
+            }
+            else
+            {
+                GameManager.Instance.oCountt++;
+                xoNumber = GameManager.Instance.oCountt;
+
+                winMove.Item2.SetState(state,xoNumber);
+                winMove.Item2.oNumber = xoNumber;
+                winMove.Item2.animation.Play();
+            return;
+            }
+            
         }
         var blockMove = CheckNextWinningMove(listTileController,TileState.X);
         if(blockMove.Item1)
         {
-            GameManager.Instance.oCountt++;
-            oNumber = GameManager.Instance.oCountt;
+           if(state == TileState.X)
+            {
+                GameManager.Instance.xCountt++;
+                xoNumber = GameManager.Instance.xCountt;
 
-            blockMove.Item2.SetState(state,oNumber);
-            blockMove.Item2.oNumber = oNumber;
-            blockMove.Item2.animation.Play();
+                 blockMove.Item2.SetState(state,xoNumber);
+                blockMove.Item2.xNumber = xoNumber;
+                blockMove.Item2.animation.Play();
             return;
+            }
+            else
+            {
+                GameManager.Instance.oCountt++;
+                xoNumber = GameManager.Instance.oCountt;
+
+                blockMove.Item2.SetState(state,xoNumber);
+                blockMove.Item2.oNumber = xoNumber;
+                blockMove.Item2.animation.Play();
+            return;
+            }
         }
 
         
         if(!blockMove.Item1)
         {
-             GameManager.Instance.oCountt++;
-             oNumber = GameManager.Instance.oCountt;
+             if(state == TileState.X)
+            {
+                GameManager.Instance.xCountt++;
+                xoNumber = GameManager.Instance.xCountt;
 
-            blockMove.Item2.SetState(state,oNumber);
-            blockMove.Item2.oNumber = oNumber;
-            blockMove.Item2.animation.Play();
+                blockMove.Item2.SetState(state,xoNumber);
+                blockMove.Item2.xNumber = xoNumber;
+                blockMove.Item2.animation.Play();
             return;
+            }
+            else
+            {
+                GameManager.Instance.oCountt++;
+                xoNumber = GameManager.Instance.oCountt;
+
+                blockMove.Item2.SetState(state,xoNumber);
+                blockMove.Item2.oNumber = xoNumber;
+                blockMove.Item2.animation.Play();
+            return;
+            }
         }
         
 

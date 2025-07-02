@@ -3,14 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
-
+using UnityEngine.SceneManagement;
 public class UIManager : MonoBehaviour
 { 
     [SerializeField] private GameObject[] menus;
 
     GameObject currentMenu;
 
+
     [SerializeField] private TextMeshProUGUI gameMode1, gameMode2;
+
+    CheckInternetConnection checkInternet;
+
+    
+    void Start()
+    {
+        checkInternet = FindObjectOfType<CheckInternetConnection>();
+        checkForInternetConnection();
+    }
 
     void Update()
     {
@@ -57,9 +67,50 @@ public class UIManager : MonoBehaviour
 
     public void ChooseStarter(int mode)
     {
-     GameManager.Instance.stateChooser = mode;
+        GameManager.Instance.stateChooser = mode;
     }
     
+
+
+    void checkForInternetConnection()
+    {
+        if (!checkInternet.IsInternetAvailable())
+        {
+            
+            Debug.Log("İnternet bağlantısı yok! Oyundan çıkılıyor...");
+               foreach(GameObject i in menus)
+            {
+                if(i.activeSelf && i != menus[5])
+                {
+                    currentMenu = i;
+                    i.SetActive(false);
+                }
+                if(i==menus[5])
+                {
+                    i.SetActive(true);
+                }
+            }
+                
+        }
+        else
+        {
+        
+            Debug.Log("İnternet bağlantısı var! Oyun devam ediyor...");
+            foreach(GameObject i in menus)
+            {
+                if(i == menus[5])
+                {
+                    i.SetActive(false);
+                }
+                else if(i == currentMenu && i != menus[5])
+                {
+                    i.SetActive(true);
+                }
+
+            }
+            
+        }
+    }
 
    
 }
