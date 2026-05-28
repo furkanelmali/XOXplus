@@ -1,146 +1,81 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
-using TMPro;
-
 
 public class AIPlayer : MonoBehaviour
 {
-     int xoNumber;
     public void MakeMove(TileState state, List<TileController> listTileController)
     {
+        if (state == TileState.Empty) return;
 
-        var winMove = CheckNextWinningMove(listTileController,state);
-        if(winMove.Item1)
+        // 1) Kazandıran hamle
+        var winMove = CheckNextWinningMove(listTileController, state);
+        if (winMove.found && winMove.tile)
         {
-            if(state == TileState.X)
-            {
-                GameManager.Instance.xCountt++;
-                xoNumber = GameManager.Instance.xCountt;
-
-                 winMove.Item2.SetState(state,xoNumber);
-                winMove.Item2.xNumber = xoNumber;
-                winMove.Item2.animation.Play();
+            winMove.tile.Place(state);
             return;
-            }
-            else
-            {
-                GameManager.Instance.oCountt++;
-                xoNumber = GameManager.Instance.oCountt;
-
-                winMove.Item2.SetState(state,xoNumber);
-                winMove.Item2.oNumber = xoNumber;
-                winMove.Item2.animation.Play();
-            return;
-            }
-            
-        }
-        var blockMove = CheckNextWinningMove(listTileController,TileState.X);
-        if(blockMove.Item1)
-        {
-           if(state == TileState.X)
-            {
-                GameManager.Instance.xCountt++;
-                xoNumber = GameManager.Instance.xCountt;
-
-                 blockMove.Item2.SetState(state,xoNumber);
-                blockMove.Item2.xNumber = xoNumber;
-                blockMove.Item2.animation.Play();
-            return;
-            }
-            else
-            {
-                GameManager.Instance.oCountt++;
-                xoNumber = GameManager.Instance.oCountt;
-
-                blockMove.Item2.SetState(state,xoNumber);
-                blockMove.Item2.oNumber = xoNumber;
-                blockMove.Item2.animation.Play();
-            return;
-            }
         }
 
-        
-        if(!blockMove.Item1)
+        // 2) Rakibin kazandıran hamlesini engelle
+        var opponent = state == TileState.X ? TileState.O : TileState.X;
+        var blockMove = CheckNextWinningMove(listTileController, opponent);
+        if (blockMove.found && blockMove.tile)
         {
-             if(state == TileState.X)
-            {
-                GameManager.Instance.xCountt++;
-                xoNumber = GameManager.Instance.xCountt;
-
-                blockMove.Item2.SetState(state,xoNumber);
-                blockMove.Item2.xNumber = xoNumber;
-                blockMove.Item2.animation.Play();
+            blockMove.tile.Place(state);
             return;
-            }
-            else
-            {
-                GameManager.Instance.oCountt++;
-                xoNumber = GameManager.Instance.oCountt;
-
-                blockMove.Item2.SetState(state,xoNumber);
-                blockMove.Item2.oNumber = xoNumber;
-                blockMove.Item2.animation.Play();
-            return;
-            }
         }
-        
 
-
+        // 3) Rastgele boş hücre (boş yoksa null)
+        var random = GetRandomEmptyCell(listTileController);
+        if (random) random.Place(state);
     }
 
-    
-
-    public (bool,TileController) CheckNextWinningMove(List<TileController> listTileController, TileState state)
+    public (bool found, TileController tile) CheckNextWinningMove(List<TileController> listTileController, TileState state)
     {
         foreach (var tile in listTileController)
         {
             if (tile.MyState != TileState.Empty) continue;
-            
-            TileState originalState = tile.MyState;
+
+            var originalState = tile.MyState;
             tile.MyState = state;
-            
-            foreach (var direction in Enum.GetValues(typeof(Direction)))
+
+            foreach (var direction in GameManager.DirectionsForSearch)
             {
-                var next = tile.GetNextTile((Direction)direction);
+                var next = tile.GetNextTile(direction);
                 if (!next) continue;
-                
+
                 if (next.MyState != state) continue;
-                
-                var last = next.GetNextTile((Direction)direction);
+
+                var last = next.GetNextTile(direction);
                 if (!last) continue;
-                
+
                 if (last.MyState != state) continue;
-                
+
                 tile.MyState = originalState;
-                return (true,tile);
+                return (true, tile);
             }
-            
+
             tile.MyState = originalState;
         }
-        
-        return (false,GetEmptyCells(listTileController,state));
+
+        return (false, null);
     }
 
-    public TileController GetEmptyCells(List<TileController> listTileController, TileState state)
+    public TileController GetRandomEmptyCell(List<TileController> listTileController)
     {
-        List<TileController> emptyCells = new List<TileController>();
-       
-        
+        var emptyCount = 0;
+        for (int i = 0; i < listTileController.Count; i++)
+            if (listTileController[i].MyState == TileState.Empty) emptyCount++;
 
+        if (emptyCount == 0) return null;
+
+        var pick = UnityEngine.Random.Range(0, emptyCount);
         for (int i = 0; i < listTileController.Count; i++)
         {
-            if (listTileController[i].MyState == TileState.Empty)
-            {
-                emptyCells.Add(listTileController[i]);
-            }
-
-            
+            if (listTileController[i].MyState != TileState.Empty) continue;
+            if (pick-- == 0) return listTileController[i];
         }
 
-        int randomIndex = UnityEngine.Random.Range(0, emptyCells.Count);
-        return emptyCells[randomIndex];
+        return null;
     }
 }

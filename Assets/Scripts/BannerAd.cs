@@ -16,14 +16,16 @@ public class BannerAd : MonoBehaviour
 
 
     BannerView _bannerView;
+    private static bool s_initialized;
 
     public void Start()
     {
-        // Initialize the Google Mobile Ads SDK.
-        MobileAds.Initialize((InitializationStatus initStatus) =>
+        // Initialize sadece bir kez (çift init bazı cihazlarda hitch yaratabiliyor)
+        if (!s_initialized)
         {
-            // This callback is called once the MobileAds SDK is initialized.
-        });
+            s_initialized = true;
+            MobileAds.Initialize((InitializationStatus initStatus) => { });
+        }
         LoadAd();
 
     }

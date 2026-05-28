@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using TMPro;
 
 
@@ -21,6 +20,20 @@ public class GameManager : MonoBehaviour
 
     public int gameMode;
     public bool isitPlayersTurn;
+
+    [Header("Cached references")]
+    [SerializeField] private AIPlayer aiPlayer;
+    [SerializeField] private FullPageAd fullPageAd;
+
+    private readonly Queue<TileController> xMoves = new Queue<TileController>(4);
+    private readonly Queue<TileController> oMoves = new Queue<TileController>(4);
+    public static readonly Direction[] DirectionsForSearch = new[]
+    {
+        Direction.up, Direction.upright, Direction.right, Direction.downright,
+        Direction.down, Direction.downleft, Direction.left, Direction.upleft
+    };
+
+    public AIPlayer AIPlayer => aiPlayer;
     
 
 
@@ -28,6 +41,14 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
         gameMode = PlayerPrefs.GetInt("gameMode", 0);
+
+        // Mobilde daha stabil frame pacing.
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
+
+        if (!aiPlayer) aiPlayer = FindObjectOfType<AIPlayer>();
+        if (!fullPageAd) fullPageAd = FindObjectOfType<FullPageAd>();
+        isitPlayersTurn = true;
     }
 
     public (bool,TileState) HasWinner()
@@ -35,14 +56,14 @@ public class GameManager : MonoBehaviour
         foreach(var tile in listTileController)
         {
             if(tile.MyState == TileState.Empty) continue;
-            foreach(var direction in Enum.GetValues(typeof(Direction)))
+            foreach(var direction in DirectionsForSearch)
             {
-               var next =  tile.GetNextTile((Direction)direction);
+               var next =  tile.GetNextTile(direction);
                if(!next) continue;
 
                if(next.MyState != tile.MyState) continue;
                
-               var last = next.GetNextTile((Direction)direction);
+               var last = next.GetNextTile(direction);
                if(!last) continue;
 
                if(last.MyState != tile.MyState) continue;
@@ -54,36 +75,27 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void checkNumber()
+    public int NextNumber(TileState state)
     {
-        if (GetTotalXCount() > 3)
-    {
-        
-        var firstX = ListTileController
-            .Where(t => t.MyState == TileState.X)
-            .OrderBy(t => t.xNumber)
-            .FirstOrDefault();
-            
-        if (firstX != null)
-        {
-            firstX.ResetTile();
-        }
+        if (state == TileState.X) return ++xCountt;
+        if (state == TileState.O) return ++oCountt;
+        return 0;
     }
 
-    if (GetTotalOCount() > 3)
+    public void RegisterMove(TileController tile, TileState state)
     {
-       
-        var firstO = ListTileController
-            .Where(t => t.MyState == TileState.O)
-            .OrderBy(t => t.oNumber)
-            .FirstOrDefault();
-            
-        if (firstO != null)
+        if (state == TileState.X)
         {
-            firstO.ResetTile();
+            xMoves.Enqueue(tile);
+            if (xMoves.Count > 3) xMoves.Dequeue().ResetTile();
+            return;
         }
-    }
-            
+
+        if (state == TileState.O)
+        {
+            oMoves.Enqueue(tile);
+            if (oMoves.Count > 3) oMoves.Dequeue().ResetTile();
+        }
     }
 
     public void WinState(TileState result)
@@ -103,27 +115,23 @@ public class GameManager : MonoBehaviour
        {
         tile.ResetTile();
        }
+       xMoves.Clear();
+       oMoves.Clear();
+       xCountt = 0;
+       oCountt = 0;
+       turn = 0;
+       isitPlayersTurn = true;
        restartText.gameObject.SetActive(false);
        restartButton.SetActive(false);
        winText.gameObject.SetActive(false);
 
     }
 
-    public int GetTotalXCount()
-    {
-        return ListTileController.Count(t => t.MyState == TileState.X);
-    }
-
-    public int GetTotalOCount()
-    {
-        return ListTileController.Count(t => t.MyState == TileState.O);
-    }
-
     private IEnumerator LoadFullPageAd()
     {
         yield return new WaitForSeconds(1f);
-        FullPageAd fpageAd = FindObjectOfType<FullPageAd>();
-            fpageAd.ShowInterstitialAd();
+        if (!fullPageAd) fullPageAd = FindObjectOfType<FullPageAd>();
+        if (fullPageAd) fullPageAd.ShowInterstitialAd();
     }
 
 }   

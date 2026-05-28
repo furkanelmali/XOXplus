@@ -321,7 +321,7 @@ GameObject:
   - component: {fileID: 246652794}
   - component: {fileID: 246652796}
   - component: {fileID: 246652795}
-  - component: {fileID: 246652797}
+  - component: {fileID: 246652798}
   m_Layer: 5
   m_Name: Touch To Play
   m_TagString: Untagged
@@ -448,23 +448,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 246652793}
   m_CullTransparentMesh: 1
---- !u!111 &246652797
-Animation:
+--- !u!114 &246652798
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 246652793}
   m_Enabled: 1
-  serializedVersion: 4
-  m_Animation: {fileID: 7400000, guid: bfcd6c4a171cde041b6e2b01e3a9c860, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: bfcd6c4a171cde041b6e2b01e3a9c860, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_UpdateMode: 0
-  m_CullingType: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8f4e2a19b3d4f6e8a0c1d2e3f4a5b6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pulseScale: 1.06
+  pulseSpeed: 1.8
 --- !u!1 &261457053
 GameObject:
   m_ObjectHideFlags: 0
@@ -1690,7 +1687,7 @@ GameObject:
   - component: {fileID: 595175842}
   - component: {fileID: 595175845}
   - component: {fileID: 595175844}
-  - component: {fileID: 595175843}
+  - component: {fileID: 595175846}
   m_Layer: 5
   m_Name: Touch To Play
   m_TagString: Untagged
@@ -1717,23 +1714,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 408}
   m_SizeDelta: {x: 979.59, y: 50}
   m_Pivot: {x: 0.5, y: 0}
---- !u!111 &595175843
-Animation:
+--- !u!114 &595175846
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 595175841}
   m_Enabled: 1
-  serializedVersion: 4
-  m_Animation: {fileID: 7400000, guid: bfcd6c4a171cde041b6e2b01e3a9c860, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: bfcd6c4a171cde041b6e2b01e3a9c860, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_UpdateMode: 0
-  m_CullingType: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8f4e2a19b3d4f6e8a0c1d2e3f4a5b6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pulseScale: 1.06
+  pulseSpeed: 1.8
 --- !u!114 &595175844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2825,7 +2819,7 @@ GameObject:
   - component: {fileID: 924125596}
   - component: {fileID: 924125598}
   - component: {fileID: 924125597}
-  - component: {fileID: 924125599}
+  - component: {fileID: 924125600}
   m_Layer: 5
   m_Name: Touch To RePlay
   m_TagString: Untagged
@@ -2952,23 +2946,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 924125595}
   m_CullTransparentMesh: 1
---- !u!111 &924125599
-Animation:
+--- !u!114 &924125600
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 924125595}
   m_Enabled: 1
-  serializedVersion: 4
-  m_Animation: {fileID: 7400000, guid: bfcd6c4a171cde041b6e2b01e3a9c860, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: bfcd6c4a171cde041b6e2b01e3a9c860, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_UpdateMode: 0
-  m_CullingType: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8f4e2a19b3d4f6e8a0c1d2e3f4a5b6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pulseScale: 1.05
+  pulseSpeed: 1.8
 --- !u!114 &955134009 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9038945236244332298, guid: 3b55d54e5c780a84095664fac6813bfc, type: 3}

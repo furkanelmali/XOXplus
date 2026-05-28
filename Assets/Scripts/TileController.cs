@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using TMPro;
 
 public class TileController : MonoBehaviour,IPointerDownHandler
 {
@@ -13,8 +12,9 @@ public class TileController : MonoBehaviour,IPointerDownHandler
     [SerializeField] private Color xColor,oColor,emptyColor;
 
     [SerializeField] private GameObject GameUI;
-    public Animation animation;
     private AudioSource audioSource;
+    private Vector3 baseScale;
+    private Coroutine popRoutine;
 
     
 
@@ -28,36 +28,20 @@ public class TileController : MonoBehaviour,IPointerDownHandler
 
     void Start()
     {
-        GameManager.Instance.isitPlayersTurn = true;
         audioSource = GetComponent<AudioSource>();
+        baseScale = transform.localScale;
     }
     public void OnPointerDown(PointerEventData eventData)
     {
         if(this.MyState != TileState.Empty) return;
         if(!GameManager.Instance.isitPlayersTurn) return;
         if(!GameUI.activeSelf) return;
-        Debug.Log("Tile clicked" + GameManager.Instance.isitPlayersTurn);
-        audioSource.Play();
-        var state = StateChooser();
-        int currentNumber;
-        if(state == TileState.X)
-        {
-            GameManager.Instance.xCountt++;
-            xNumber = GameManager.Instance.xCountt;
-            currentNumber = xNumber;
+        if (audioSource) audioSource.Play();
 
-        }
-        else
-        {
-            GameManager.Instance.oCountt++;
-            oNumber = GameManager.Instance.oCountt;
-            currentNumber = oNumber;
-        }
-        SetState(state, currentNumber); 
-        animation.Play();
+        var state = StateChooser();
+        Place(state);
 
         GameManager.Instance.turn++;
-        GameManager.Instance.checkNumber();
         var result = GameManager.Instance.HasWinner();
         if(GameManager.Instance.gameMode == 1)
         {
@@ -68,8 +52,23 @@ public class TileController : MonoBehaviour,IPointerDownHandler
 
         if(result.Item1)
         {
+            GameManager.Instance.isitPlayersTurn = false;
             GameManager.Instance.WinState(result.Item2);
         }
+    }
+
+    public void Place(TileState state)
+    {
+        if (MyState != TileState.Empty) return;
+
+        var currentNumber = GameManager.Instance.NextNumber(state);
+        if (state == TileState.X) xNumber = currentNumber;
+        else oNumber = currentNumber;
+
+        SetState(state, currentNumber);
+        PlayPop();
+
+        GameManager.Instance.RegisterMove(this, state);
     }
 
 
@@ -82,6 +81,43 @@ public class TileController : MonoBehaviour,IPointerDownHandler
         
      
     }
+
+    private void PlayPop()
+    {
+        if (popRoutine != null) StopCoroutine(popRoutine);
+        popRoutine = StartCoroutine(PopRoutine());
+    }
+
+    private IEnumerator PopRoutine()
+    {
+        // Basit, allocationsız scale pop. Legacy Animation yerine.
+        const float duration = 0.12f;
+        var start = baseScale * 0.85f;
+        var peak = baseScale * 1.08f;
+
+        transform.localScale = start;
+
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            var a = Mathf.Clamp01(t / duration);
+            transform.localScale = Vector3.LerpUnclamped(start, peak, a);
+            yield return null;
+        }
+
+        t = 0f;
+        while (t < duration)
+        {
+            t += Time.unscaledDeltaTime;
+            var a = Mathf.Clamp01(t / duration);
+            transform.localScale = Vector3.LerpUnclamped(peak, baseScale, a);
+            yield return null;
+        }
+
+        transform.localScale = baseScale;
+        popRoutine = null;
+    }
     
     private IEnumerator AITurnWithDelay()
     {
@@ -89,20 +125,20 @@ public class TileController : MonoBehaviour,IPointerDownHandler
         yield return new WaitForSeconds(0.5f); // 0.5 saniyelik gecikme
     
         var state = StateChooser();
-        AIPlayer aiPlayer = FindObjectOfType<AIPlayer>();
-        aiPlayer.MakeMove(state, GameManager.Instance.ListTileController);
+        var aiPlayer = GameManager.Instance.AIPlayer;
+        if (aiPlayer) aiPlayer.MakeMove(state, GameManager.Instance.ListTileController);
     
 
         GameManager.Instance.turn++;
-        GameManager.Instance.checkNumber();
         var result = GameManager.Instance.HasWinner();
     
         if(result.Item1)
         {
+            GameManager.Instance.isitPlayersTurn = false;
             GameManager.Instance.WinState(result.Item2);
         }
         
-        GameManager.Instance.isitPlayersTurn = true;
+        if(!result.Item1) GameManager.Instance.isitPlayersTurn = true;
     }
 
 
@@ -151,6 +187,12 @@ public void ResetTile()
     spriteRenderer.sprite = null;
     xNumber = 0;
     oNumber = 0;
+    if (popRoutine != null)
+    {
+        StopCoroutine(popRoutine);
+        popRoutine = null;
+    }
+    transform.localScale = baseScale;
 }
 
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
-using UnityEngine.SceneManagement;
 public class UIManager : MonoBehaviour
 { 
     [SerializeField] private GameObject[] menus;
@@ -15,26 +14,13 @@ public class UIManager : MonoBehaviour
 
     CheckInternetConnection checkInternet;
 
+    private static readonly Color ActiveColor = new Color(0f, 188f / 255f, 1f);
     
     void Start()
     {
         checkInternet = FindObjectOfType<CheckInternetConnection>();
         checkForInternetConnection();
-    }
-
-    void Update()
-    {
-        if(GameManager.Instance.gameMode == 0)
-        {
-            gameMode1.color = new Color(0, 188, 255);
-            gameMode2.color = Color.white;
-        }
-        else
-        {
-            gameMode1.color = Color.white;
-            gameMode2.color = new Color(0, 188, 255);
-        }
-        
+        RefreshGameModeUI();
     }
 
      public void CloseBtn()
@@ -63,6 +49,7 @@ public class UIManager : MonoBehaviour
     {
         GameManager.Instance.gameMode = gameMode;
         PlayerPrefs.SetInt("gameMode", gameMode);
+        RefreshGameModeUI();
     }
 
     public void ChooseStarter(int mode)
@@ -70,6 +57,21 @@ public class UIManager : MonoBehaviour
         GameManager.Instance.stateChooser = mode;
     }
     
+    private void RefreshGameModeUI()
+    {
+        if (!gameMode1 || !gameMode2 || !GameManager.Instance) return;
+
+        if (GameManager.Instance.gameMode == 0)
+        {
+            gameMode1.color = ActiveColor;
+            gameMode2.color = Color.white;
+        }
+        else
+        {
+            gameMode1.color = Color.white;
+            gameMode2.color = ActiveColor;
+        }
+    }
 
 
     void checkForInternetConnection()
