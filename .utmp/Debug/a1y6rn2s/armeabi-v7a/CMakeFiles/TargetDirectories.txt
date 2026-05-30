@@ -1,0 +1,5 @@
+/Users/furkanelmali/Documents/GitHub/XOXplus/.utmp/Debug/a1y6rn2s/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/furkanelmali/Documents/GitHub/XOXplus/.utmp/Debug/a1y6rn2s/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/Users/furkanelmali/Documents/GitHub/XOXplus/.utmp/Debug/a1y6rn2s/armeabi-v7a/FramePacing/CMakeFiles/swappywrapper.dir
+/Users/furkanelmali/Documents/GitHub/XOXplus/.utmp/Debug/a1y6rn2s/armeabi-v7a/FramePacing/CMakeFiles/edit_cache.dir
+/Users/furkanelmali/Documents/GitHub/XOXplus/.utmp/Debug/a1y6rn2s/armeabi-v7a/FramePacing/CMakeFiles/rebuild_cache.dir

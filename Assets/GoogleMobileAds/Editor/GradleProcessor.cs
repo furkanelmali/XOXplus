@@ -17,6 +17,11 @@ public class GradleProcessor : IPostGenerateGradleAndroidProject
     private const string GMA_VALIDATE_GRADLE_DEPENDENCIES =
       "gradle.projectsEvaluated { apply from: 'GoogleMobileAdsPlugin.androidlib/validate_dependencies.gradle' }";
 
+    private const string GMA_ANDROIDLIB_NAMESPACE = "namespace \"com.google.unity.ads\"";
+
+    private const string GMA_ANDROIDLIB_UNIQUE_NAMESPACE =
+      "namespace \"com.google.unity.ads.plugin\"";
+
     public void OnPostGenerateGradleAndroidProject(string path)
     {
         var rootDirinfo = new DirectoryInfo(path);
@@ -87,6 +92,20 @@ public class GradleProcessor : IPostGenerateGradleAndroidProject
             {
                 contents = DeleteLineContainingSubstring(contents, validateGradleDependencies);
                 File.WriteAllText(gradlePath, contents);
+            }
+        }
+
+        var gmaAndroidLibGradle = Path.Combine(
+            rootPath, "unityLibrary", "GoogleMobileAdsPlugin.androidlib", "build.gradle");
+
+        if (File.Exists(gmaAndroidLibGradle))
+        {
+            var contents = File.ReadAllText(gmaAndroidLibGradle);
+            if (contents.Contains(GMA_ANDROIDLIB_NAMESPACE))
+            {
+                contents = contents.Replace(
+                    GMA_ANDROIDLIB_NAMESPACE, GMA_ANDROIDLIB_UNIQUE_NAMESPACE);
+                File.WriteAllText(gmaAndroidLibGradle, contents);
             }
         }
     }
