@@ -7,9 +7,9 @@ public class BannerAd : MonoBehaviour
 {
    // These ad units are configured to always serve test ads.
 #if UNITY_ANDROID
-    private string _adUnitId = "ca-app-pub-8143324127173924/9651262375";
+    private string _adUnitId = "ca-app-pub-2257151077434266~3253154765";
 #elif UNITY_IPHONE
-  private string _adUnitId = "ca-app-pub-3940256099942544/2934735716";
+  private string _adUnitId = "ca-app-pub-2257151077434266~3253154765";
 #else
   private string _adUnitId = "unused";
 #endif

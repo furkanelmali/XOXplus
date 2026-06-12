@@ -107,6 +107,13 @@ public class GradleProcessor : IPostGenerateGradleAndroidProject
                     GMA_ANDROIDLIB_NAMESPACE, GMA_ANDROIDLIB_UNIQUE_NAMESPACE);
                 File.WriteAllText(gmaAndroidLibGradle, contents);
             }
+            else if (!contents.Contains("namespace "))
+            {
+                contents = contents.Replace(
+                    "android {",
+                    "android {\n    " + GMA_ANDROIDLIB_UNIQUE_NAMESPACE);
+                File.WriteAllText(gmaAndroidLibGradle, contents);
+            }
         }
     }
 

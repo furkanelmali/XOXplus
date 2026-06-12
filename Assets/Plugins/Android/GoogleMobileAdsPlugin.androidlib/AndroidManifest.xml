@@ -3,7 +3,7 @@
   <uses-sdk android:minSdkVersion="21" />
   <application>
     <uses-library android:required="false" android:name="org.apache.http.legacy" />
-    <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-8143324127173924~9164177215" />
+    <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-2257151077434266~3253154765" />
     <meta-data android:name="com.google.unity.ads.UNITY_VERSION" android:value="6000.4.8f1" />
   </application>
 </manifest>
